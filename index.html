@@ -13,6 +13,9 @@
     <!-- Icons -->
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
 
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
+
 </head>
 <body>
 
@@ -24,36 +27,46 @@
         <div class='row'>
             <div class='col'>
                 <div class='row'>
-                    <textarea class='form-control' id="deckStream" rows="10"></textarea>
+                    <div class="col">
+                        <textarea class='form-control' v-model="gVar.deckStream" rows="10" @blur="getDeck" placeholder='輸入牌組'></textarea>
+                    </div>
+                    <div class="col">
+                        <div class='row'><input class='form-control' v-model='gVar.drawTimes' placeholder='抽牌次數/draw times.'/></div>
+                        <div class='row'><input class='form-control' v-model="gVar.handCardNum" placeholder='手牌數量/hand card amout.'/></div>
+                        <div class='row'>
+                            <select class="form-control" @dblclick='getHand' multiple>
+                                <option disabled>--點兩下加入下方欄位--</option>
+                                <option v-for="card in gVar.deck">{{card}}</option>
+                            </select>
+                        </div>
+                        <div class='row'>
+                            <select class='form-control' @dblclick='delHand' multiple>
+                                <option v-for="(hand, indx) in gVar.handCard">{{hand}}</option>
+                            </select>
+                        </div>
+                    </div>
                 </div>
+
                 <div class='row'>
-                    <div class='row'>
-                        <div class='col'><input class='form-control' id='drawTimes' v-model='gVar.drawTimes' placeholder='抽牌次數/draw times.'/></div>
-                        <div class='col'><input class='form-control' id='handCard' v-model="gVar.handCard" placeholder='手牌數量/hand card amout.'/></div>
-                        {{gVar.drawTimes}}
-                        {{gVar.handCard}}
-                    </div>
-                    <div class='row'>
-                        <select id='sel_cardlist'>
-                            <!-- option -->
-                        </select>
-                    </div>
-                    <button class='form-control'id="start" @click="startAnalysis">開始分析</button>
+                    <button class='form-control' @click="startAnalysis">開始分析</button>
                 </div>
             </div>
-            <div class='col' id='display'>
+            <div class='col'>
             </div>
         </div>
     <div>
 
-    <span id="prob"></span>
+    <span></span>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
     <script src="https://code.jquery.com/jquery-3.2.1.min.js" integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin="anonymous"></script>
 
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.min.js" integrity="sha384-alpBpkh1PFOepccYVYDB4do5UnbKysX5WZXm3XxPqe5iKTfUKjNkCk9SaVuEZflJ" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/js/bootstrap.bundle.min.js" integrity="sha384-3ziFidFTgxJXHMDttyPJKDuTlmxJlwbSkojudK/CkRqKDOmeSbN6KLrGdrBQnT2n" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.common.js" integrity="sha256-hlHoy5pVoubqmkmYfBF7qvZ1y8Beiuf/PoizbMFPcnI=" crossorigin="anonymous"></script>
+
+    <!-- Latest compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
+
     <script src="./drawCardChance.js"></script>
 
 <style>
