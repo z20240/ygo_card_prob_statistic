@@ -64,19 +64,25 @@ var main = new Vue({
         gVar: {
             deck: [],
             cardlist: {},
-            drawTimes: 1000000,
+            drawTimes: 100000,
             handCardLimit: null,
             handCard: [{
                 canBeChanged:true,
-                cardAmount:null,
+                cardAmount:1,
                 cards:{},
             }],
             deckStream: null,
         },
+        gOutPut : {
+            prob : 0,
+            handSet : null,
+        }
     },
     methods: {
         startAnalysis: function(event) {
             let self = this;
+            let successCardSet = [];
+            let sucCount = 0;
 
             if (Object.keys(self.gVar.handCard[self.gVar.handCard.length-1].cards).length <= 0) {
                 self.gVar.handCard.splice(self.gVar.handCard.length-1, 1);
@@ -85,10 +91,19 @@ var main = new Vue({
             for (let ti = 0 ; ti < self.gVar.drawTimes ; ti++) {
                 let tmpDeck = createDeck(self.gVar.deck);
                 tmpDeck = shuffle(tmpDeck);
+                let tempHandCard = JSON.parse(JSON.stringify(self.gVar.handCard)); // 深層
+                let {result, cardSet} = checkSuccessDraw(tmpDeck, tempHandCard, self.gVar.handCardLimit);
 
-                checkSuccessDraw(tmpDeck, self.gVar.handCard, self.gVar.handCardLimit);
-
+                if (result) {
+                    console.log("success", sucCount);
+                    sucCount++;
+                    successCardSet.push(cardSet);
+                }
             }
+
+            console.log(sucCount, "pro", (sucCount / self.gVar.drawTimes), successCardSet);
+            self.gOutPut.prob = sucCount / self.gVar.drawTimes;
+            self.gOutPut.handSet = successCardSet;
         },
         getDeck: function(event) {
             let self = this;
@@ -138,7 +153,7 @@ var main = new Vue({
                 }
                 self.$set(self.gVar.handCard, setAmout+1, {
                     canBeChanged : true,
-                    cardAmount : null,
+                    cardAmount : 1,
                     cards : {},
                 });
             }
@@ -160,14 +175,32 @@ var main = new Vue({
 });
 
 function checkSuccessDraw(deck, HandcardSets, drawTimes) {
+    let cardSet = [], successCount = [];
+    let result = false;
     for (let i = 0 ; i < drawTimes ; i++) { // 5抽
         let size = deck.length;
         let cardAry = deck.splice(Math.floor(Math.random() * size), 1);
+
         let card = cardAry[0];
+        cardSet.push(card); // 抽出來的牌型
 
         for (let set = 0 ; set < HandcardSets.length ; set++) {
 
+            if (typeof(HandcardSets[set].cards[card]) !== 'undefined') {
+                delete HandcardSets[set].cards[card]; // 將比對中的拿掉
+                if (!successCount[set]) successCount[set] = 0;
+                successCount[set]++;
+
+                if (successCount[set] == HandcardSets[set].cardAmount)
+                    result = true;
+            }
         }
 
+    }
+
+    if (result) {
+        return {result: true, cardSet: cardSet};
+    } else {
+        return {result: false, cardSet: []};
     }
 }

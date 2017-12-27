@@ -22,7 +22,7 @@
 
     <!-- Just an image -->
     <nav class="navbar navbar-light bg-faded">
-        <a class="navbar-brand" href="#">Test</a>
+        <a class="navbar-brand" href="#">機率試算器</a>
     </nav>
     <div id="app" class="container">
         <div class='row'>
@@ -36,7 +36,7 @@
 
                             <div class="col">
                                 <div class="row"><span class="badge badge-pill badge-success">循環次數：{{gVar.drawTimes}}</span></div>
-                                <div class="row"><input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="10000000" step="10000"/></div>
+                                <div class="row"><input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="1000000" step="10000"/></div>
                             </div>
                             <div class="col"><button class='form-control btn btn-outline-info' @click="startAnalysis">開始分析</button></div>
                         </div>
