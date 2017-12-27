@@ -16,6 +16,7 @@
     <!-- Latest compiled and minified CSS -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/css/bootstrap-select.min.css">
 
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
@@ -28,28 +29,53 @@
             <div class='col'>
                 <div class='row'>
                     <div class="col">
-                        <textarea class='form-control' v-model="gVar.deckStream" rows="10" @blur="getDeck" placeholder='輸入牌組'></textarea>
+                        <div class="row">
+                                <textarea class='form-control' v-model="gVar.deckStream" rows="10" @blur="getDeck" placeholder='輸入牌組'></textarea>
+                        </div>
+                        <div class='row'>
+
+                            <div class="col">
+                                <div class="row"><span class="badge badge-pill badge-success">循環次數：{{gVar.drawTimes}}</span></div>
+                                <div class="row"><input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="10000000" step="10000"/></div>
+                            </div>
+                            <div class="col"><button class='form-control btn btn-outline-info' @click="startAnalysis">開始分析</button></div>
+                        </div>
                     </div>
                     <div class="col">
-                        <div class='row'><input class='form-control' v-model='gVar.drawTimes' placeholder='抽牌次數/draw times.'/></div>
-                        <div class='row'><input class='form-control' v-model="gVar.handCardNum" placeholder='手牌數量/hand card amout.'/></div>
+                        <div class="row">
+                            <div class="col">
+                                <div class="row"><span class="badge badge-pill badge-success">手牌數量：{{gVar.handCardLimit}}</span></div>
+                                <div class="row"><input v-model="gVar.handCardLimit" class='form-control' type="range" min="1" v-bind:max="gVar.deck.length" step="1"/></div>
+                            </div>
+                        </div>
                         <div class='row'>
                             <select class="form-control" @dblclick='getHand' multiple>
                                 <option disabled>--點兩下加入下方欄位--</option>
                                 <option v-for="card in gVar.deck">{{card}}</option>
                             </select>
                         </div>
-                        <div class='row'>
-                            <select class='form-control' @dblclick='delHand' multiple>
-                                <option v-for="(hand, indx) in gVar.handCard">{{hand}}</option>
-                            </select>
+                        <div class='row' v-for='set in gVar.handCard.length'>
+                            <div class="col">
+                                <div class="row">
+                                    <span class="badge badge-pill badge-success">組合卡片張數：{{gVar.handCard[set-1].cardAmount}}</span>
+                                    <input v-model="gVar.handCard[set-1].cardAmount" class='form-control' type="range" min="1" v-bind:max="gVar.handCardLimit" step="1" v-bind:disabled="!gVar.handCard[set-1].canBeChanged"/>
+                                </div>
+                                <div class="row"><button class='btn btn-outline-danger' @click="deleteThis(set-1)"><i class="fa fa-trash-o" aria-hidden="true"></i>刪除此組合</button></div>
+                            </div>
+                            <div class="col">
+                                <div class="row">
+                                    <span class="badge badge-pill badge-success">製作你的手牌組合</span>
+                                    <select class='form-control' multiple>
+                                        <option disabled>-組合 {{set}}-</option>
+                                        <option v-for="(hand, indx) in Object.keys(gVar.handCard[set-1].cards)">{{hand}}</option>
+                                    </select>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
 
-                <div class='row'>
-                    <button class='form-control' @click="startAnalysis">開始分析</button>
-                </div>
+
             </div>
             <div class='col'>
             </div>
@@ -68,9 +94,5 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.4/js/bootstrap-select.min.js"></script>
 
     <script src="./drawCardChance.js"></script>
-
-<style>
-
-</style>
 </body>
 </html>

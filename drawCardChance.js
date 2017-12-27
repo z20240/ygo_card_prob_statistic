@@ -30,13 +30,10 @@ $(function () {
 //     console.log("success", success, "Times", allTimes, "P=", success / allTimes);
 // }
 
-function createDeck(deck) {
-    for (let i = 0; i < 3; i++)
-        deck.push(1);
-
-    for (let i = 0; i < 57; i++)
-        deck.push(0);
-
+function createDeck(deckTemplate) {
+    let deck = [];
+    for (let i = 0; i < deckTemplate.length; i++)
+        deck.push(deckTemplate[i]);
     return deck;
 }
 
@@ -67,14 +64,31 @@ var main = new Vue({
         gVar: {
             deck: [],
             cardlist: {},
-            drawTimes: null,
-            handCardNum: null,
-            handCard: [],
+            drawTimes: 1000000,
+            handCardLimit: null,
+            handCard: [{
+                canBeChanged:true,
+                cardAmount:null,
+                cards:{},
+            }],
             deckStream: null,
         },
     },
     methods: {
         startAnalysis: function(event) {
+            let self = this;
+
+            if (Object.keys(self.gVar.handCard[self.gVar.handCard.length-1].cards).length <= 0) {
+                self.gVar.handCard.splice(self.gVar.handCard.length-1, 1);
+            }
+
+            for (let ti = 0 ; ti < self.gVar.drawTimes ; ti++) {
+                let tmpDeck = createDeck(self.gVar.deck);
+                tmpDeck = shuffle(tmpDeck);
+
+                checkSuccessDraw(tmpDeck, self.gVar.handCard, self.gVar.handCardLimit);
+
+            }
         },
         getDeck: function(event) {
             let self = this;
@@ -104,24 +118,56 @@ var main = new Vue({
         },
         getHand: function(event) {
             let self = this;
+            let setAmout = self.gVar.handCard.length-1;
 
-            if (!self.gVar.handCardNum) {
-                alert("請設定手牌張數");
+            console.log("setAmout", setAmout, self.gVar.handCard)
+            if (!self.gVar.handCardLimit) {
+                alert("請設定手牌數量");
                 return;
             }
 
-            if (self.gVar.handCard.length >= self.gVar.handCardNum) {
-                alert("已到達設定手牌數量上限");
+            if (!self.gVar.handCard[setAmout].cardAmount) {
+                alert("請設定此組合數量");
                 return;
+            }
+
+            if (!self.gVar.handCard[setAmout]
+                || Object.keys(self.gVar.handCard[setAmout].cards).length+1 >= self.gVar.handCard[setAmout].cardAmount) {
+                if (self.gVar.handCard[setAmout]) {
+                    self.gVar.handCard[setAmout].canBeChanged = false;
+                }
+                self.$set(self.gVar.handCard, setAmout+1, {
+                    canBeChanged : true,
+                    cardAmount : null,
+                    cards : {},
+                });
             }
 
             let card = event.target.innerText;
 
-            self.gVar.handCard.push(card);
+            self.gVar.handCard[setAmout].cards[card] = 1;
         },
-        delHand: function(event) {
+        delHand: function(event, set) {
             let self = this;
-            self.gVar.handCard.splice(event.target.index, 1);
+            console.log(event, set);
+            delete self.gVar.handCard[set].cards[event.target.innerText];
+        },
+        deleteThis: function(set) {
+            let self = this;
+            self.gVar.handCard.splice(set, 1);
         },
     }
 });
+
+function checkSuccessDraw(deck, HandcardSets, drawTimes) {
+    for (let i = 0 ; i < drawTimes ; i++) { // 5抽
+        let size = deck.length;
+        let cardAry = deck.splice(Math.floor(Math.random() * size), 1);
+        let card = cardAry[0];
+
+        for (let set = 0 ; set < HandcardSets.length ; set++) {
+
+        }
+
+    }
+}
