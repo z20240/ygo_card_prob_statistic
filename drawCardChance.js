@@ -72,10 +72,11 @@ var main = new Vue({
                 cards:{},
             }],
             deckStream: null,
+            cardSetIdx:1,
         },
         gOutPut : {
-            prob : 0,
-            handSet : null,
+            prob_str : "此牌組合的機率為：0",
+            handSet : [],
         }
     },
     methods: {
@@ -83,6 +84,8 @@ var main = new Vue({
             let self = this;
             let successCardSet = [];
             let sucCount = 0;
+
+            self.gOutPut.prob_str = "正在為您計算中，請稍候...";
 
             if (Object.keys(self.gVar.handCard[self.gVar.handCard.length-1].cards).length <= 0) {
                 self.gVar.handCard.splice(self.gVar.handCard.length-1, 1);
@@ -102,7 +105,7 @@ var main = new Vue({
             }
 
             console.log(sucCount, "pro", (sucCount / self.gVar.drawTimes), successCardSet);
-            self.gOutPut.prob = sucCount / self.gVar.drawTimes;
+            self.gOutPut.prob_str = "此牌組合的機率為：" + (sucCount / self.gVar.drawTimes);
             self.gOutPut.handSet = successCardSet;
         },
         getDeck: function(event) {

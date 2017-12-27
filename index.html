@@ -29,17 +29,21 @@
             <div class='col'>
                 <div class='row'>
                     <div class="col">
-                        <div class="row">
+                        <!-- <div class="row"> -->
                                 <textarea class='form-control' v-model="gVar.deckStream" rows="10" @blur="getDeck" placeholder='輸入牌組'></textarea>
-                        </div>
-                        <div class='row'>
-
+                        <!-- </div> -->
+                        <!-- <div class='row'> -->
                             <div class="col">
-                                <div class="row"><span class="badge badge-pill badge-success">循環次數：{{gVar.drawTimes}}</span></div>
-                                <div class="row"><input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="1000000" step="10000"/></div>
+                                <hr>
+                                <div class="row">
+                                    <span class="badge badge-pill badge-success">循環次數：{{gVar.drawTimes}}</span>
+                                </div>
+                                <div class="row">
+                                    <input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="1000000" step="10000"/>
+                                </div>
                             </div>
-                            <div class="col"><button class='form-control btn btn-outline-info' @click="startAnalysis">開始分析</button></div>
-                        </div>
+                            <div><button class='form-control btn btn-outline-info' @click="startAnalysis">開始分析</button></div>
+                        <!-- </div> -->
                     </div>
                     <div class="col">
                         <div class="row">
@@ -54,16 +58,17 @@
                                 <option v-for="card in gVar.deck">{{card}}</option>
                             </select>
                         </div>
+                        <hr>
                         <div class='row' v-for='set in gVar.handCard.length'>
                             <div class="col">
-                                <div class="row">
+                                <div>
                                     <span class="badge badge-pill badge-success">組合卡片張數：{{gVar.handCard[set-1].cardAmount}}</span>
                                     <input v-model="gVar.handCard[set-1].cardAmount" class='form-control' type="range" min="1" v-bind:max="gVar.handCardLimit" step="1" v-bind:disabled="!gVar.handCard[set-1].canBeChanged"/>
                                 </div>
-                                <div class="row"><button class='btn btn-outline-danger' @click="deleteThis(set-1)"><i class="fa fa-trash-o" aria-hidden="true"></i>刪除此組合</button></div>
+                                <div class="row"><button class='btn btn-outline-danger form-control' @click="deleteThis(set-1)"><i class="fa fa-trash-o" aria-hidden="true"></i>刪除</button></div>
                             </div>
                             <div class="col">
-                                <div class="row">
+                                <div>
                                     <span class="badge badge-pill badge-success">製作你的手牌組合</span>
                                     <select class='form-control' multiple>
                                         <option disabled>-組合 {{set}}-</option>
@@ -74,10 +79,17 @@
                         </div>
                     </div>
                 </div>
-
-
             </div>
+
             <div class='col'>
+                <div class="alert alert-info" role="alert">
+                    <h3><span class="text-primary">{{gOutPut.prob_str}}</span></h3>
+                </div>
+                <div class="alert alert-secondary">
+                    <h4><span class="text-primary">查看詳細組合 {{gVar.cardSetIdx}}</span></h4>
+                    <input v-model="gVar.cardSetIdx" class='form-control' type="range" min="1" v-bind:max="gOutPut.handSet.length" step="1"/>
+                    <span v-if='gOutPut.handSet'>{{gOutPut.handSet[gVar.cardSetIdx-1]}}</span>
+                </div>
             </div>
         </div>
     <div>
