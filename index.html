@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
-    <title>project_web</title>
+    <title>抽牌機率試算器</title>
 
     <link href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.2/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-PsH8R72JQ3SOdhVi3uxftmaW6Vc51MKb0q5P2rRUpPvrszuE4W1povHYgTpBfshb" crossorigin="anonymous">
 
@@ -22,9 +22,9 @@
 
     <!-- Just an image -->
     <nav class="navbar navbar-light bg-faded">
-        <a class="navbar-brand" href="#">機率試算器</a>
+        <a class="navbar-brand" href="#">抽牌機率試算器</a>
     </nav>
-    <div id="app" class="container">
+    <section id="app" class="container">
         <div class='row'>
             <div class='col'>
                 <div class='row'>
@@ -39,7 +39,7 @@
                                     <span class="badge badge-pill badge-success">循環次數：{{gVar.drawTimes}}</span>
                                 </div>
                                 <div class="row">
-                                    <input v-model="gVar.drawTimes" class='form-control' type="range" min="0" max="1000000" step="10000"/>
+                                    <input v-model="gVar.drawTimes" class='form-control' type="range" min="31" max="100031" step="10000"/>
                                 </div>
                             </div>
                             <div><button class='form-control btn btn-outline-info' @click="startAnalysis">開始分析</button></div>
@@ -72,7 +72,8 @@
                                     <span class="badge badge-pill badge-success">製作你的手牌組合</span>
                                     <select class='form-control' multiple>
                                         <option disabled>-組合 {{set}}-</option>
-                                        <option v-for="(hand, indx) in Object.keys(gVar.handCard[set-1].cards)">{{hand}}</option>
+                                        <!-- <option v-for="hand in Object.keys(gVar.handCard[set-1].cards)">{{hand}}</option> -->
+                                        <option v-for="hand in gVar.handCard[set-1].cardnamelist">{{hand}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -83,16 +84,26 @@
 
             <div class='col'>
                 <div class="alert alert-info" role="alert">
-                    <h3><span class="text-primary">{{gOutPut.prob_str}}</span></h3>
+                    <h4><span class="text-success">總共{{gVar.deck.length}}張卡</span></h4>
+                    <h4><span class="text-primary">計算</span></h4>
+                    <div v-for='set in gVar.handCard.length' v-if='gVar.handCard'>
+                        <p><span v-if='gVar.handCard[set-1].cardnamelist.length >0'>[</span><span v-for='card in gVar.handCard[set-1].cardnamelist'>{{card}}, </span><span v-if='gVar.handCard[set-1].cardnamelist.length >0'>]</span></p>
+                    </div>
+
+                    <h4><span class="text-primary">{{gOutPut.prob_str}}</span></h4>
                 </div>
                 <div class="alert alert-secondary">
                     <h4><span class="text-primary">查看詳細組合 {{gVar.cardSetIdx}}</span></h4>
                     <input v-model="gVar.cardSetIdx" class='form-control' type="range" min="1" v-bind:max="gOutPut.handSet.length" step="1"/>
-                    <span v-if='gOutPut.handSet'>{{gOutPut.handSet[gVar.cardSetIdx-1]}}</span>
+                    <!-- <span v-if='gOutPut.handSet'>{{gOutPut.handSet[gVar.cardSetIdx-1]}}</span> -->
+                </div>
+
+                <div class="alert alert-primary" v-if='gOutPut.handSet'>
+                    <div v-for='card in gOutPut.handSet[gVar.cardSetIdx-1]'><span class="badge badge-primary">{{card}}</span></div>
                 </div>
             </div>
         </div>
-    <div>
+    <section>
 
     <span></span>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>

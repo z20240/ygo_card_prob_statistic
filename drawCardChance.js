@@ -1,62 +1,4 @@
-//@ts-nocheck
-$(function () {
-    // $("#start").click(() => {
-    //     gVar.drawTimes = $('#drawTimes').val();
-    //     gVar.handCard = $('#handCard').val();
-    //     getDeck();
-    // })
-
-});
-
-// function main() {
-//     let success = 0;
-//     let allTimes = 100000;
-//     for (let times = 0; times < allTimes; times++) {
-//         let deck = [];
-
-//         deck = createDeck(deck);
-//         deck = shuffle(deck);
-
-//         for (let i = 0; i < 5; i++) {
-//             let size = deck.length;
-//             let eleAry = deck.splice(Math.floor(Math.random() * size), 1);
-//             if (eleAry[0] > 0) {
-//                 success++;
-//                 break;
-//             }
-//         }
-//     }
-
-//     console.log("success", success, "Times", allTimes, "P=", success / allTimes);
-// }
-
-function createDeck(deckTemplate) {
-    let deck = [];
-    for (let i = 0; i < deckTemplate.length; i++)
-        deck.push(deckTemplate[i]);
-    return deck;
-}
-
-
-function shuffle(array) {
-    var currentIndex = array.length, temporaryValue, randomIndex;
-
-    // While there remain elements to shuffle...
-    while (0 !== currentIndex) {
-
-        // Pick a remaining element...
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-
-        // And swap it with the current element.
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-    }
-
-    return array;
-}
-
+// @ts-nocheck
 
 var main = new Vue({
     el: '#app',
@@ -70,12 +12,13 @@ var main = new Vue({
                 canBeChanged:true,
                 cardAmount:1,
                 cards:{},
+                cardnamelist:[],
             }],
             deckStream: null,
             cardSetIdx:1,
         },
         gOutPut : {
-            prob_str : "此牌組合的機率為：0",
+            prob_str : "此組合的機率為：0",
             handSet : [],
         }
     },
@@ -138,14 +81,9 @@ var main = new Vue({
             let self = this;
             let setAmout = self.gVar.handCard.length-1;
 
-            console.log("setAmout", setAmout, self.gVar.handCard)
+            console.log("setAmout pre", setAmout, self.gVar.handCard);
             if (!self.gVar.handCardLimit) {
                 alert("請設定手牌數量");
-                return;
-            }
-
-            if (!self.gVar.handCard[setAmout].cardAmount) {
-                alert("請設定此組合數量");
                 return;
             }
 
@@ -158,12 +96,16 @@ var main = new Vue({
                     canBeChanged : true,
                     cardAmount : 1,
                     cards : {},
+                    cardnamelist:[],
                 });
             }
 
             let card = event.target.innerText;
 
             self.gVar.handCard[setAmout].cards[card] = 1;
+            self.gVar.handCard[setAmout].cardnamelist.push(card);
+
+            console.log("setAmout post", setAmout, self.gVar.handCard);
         },
         delHand: function(event, set) {
             let self = this;
@@ -206,4 +148,31 @@ function checkSuccessDraw(deck, HandcardSets, drawTimes) {
     } else {
         return {result: false, cardSet: []};
     }
+}
+
+function createDeck(deckTemplate) {
+    let deck = [];
+    for (let i = 0; i < deckTemplate.length; i++)
+        deck.push(deckTemplate[i]);
+    return deck;
+}
+
+
+function shuffle(array) {
+    var currentIndex = array.length, temporaryValue, randomIndex;
+
+    // While there remain elements to shuffle...
+    while (0 !== currentIndex) {
+
+        // Pick a remaining element...
+        randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex -= 1;
+
+        // And swap it with the current element.
+        temporaryValue = array[currentIndex];
+        array[currentIndex] = array[randomIndex];
+        array[randomIndex] = temporaryValue;
+    }
+
+    return array;
 }
